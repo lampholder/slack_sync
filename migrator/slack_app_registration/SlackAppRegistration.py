@@ -28,7 +28,9 @@ def post_install():
 
     response = make_response(json.dumps(tokens), 200)
 
-    for token, value in tokens.iteritmes():
-        response.set_cookie(token, value)
+
+    print 'auth_code', auth_code
+    #for token, value in tokens.iteritems():
+    #    response.set_cookie(token, value)
 
     return response
