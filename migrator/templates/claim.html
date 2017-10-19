@@ -7,7 +7,7 @@
         <style>
             body {
                 background-color: #d3ede1; /* #76cfa6; */
-                font-family: "Open Sans";
+                font-family: Sans-Serif;
                 margin: 0px;
                 padding: 0px;
                 color: #454545;
@@ -114,6 +114,7 @@
                 margin-left: auto;
                 margin-right: auto;
                 text-align: center;
+                margin-bottom: 20px;
             }
             a:visited {
                 color: #454545;
@@ -124,9 +125,9 @@
         <!--<script type="text/javascript" src="bin/app.js"></script> -->
         <div id="center">
             <div id="header">
-                <img src="images/green_slack.png">
-                <img src="images/green_arrow.png">
-                <img src="images/riot.png">
+                <img src="/migrator/static/images/green_slack.png">
+                <img src="/migrator/static/images/green_arrow.png">
+                <img src="/migrator/static/images/riot.png">
             </div>
             <div id="content-title">
                 <h1>
@@ -139,25 +140,25 @@
                     <div class="row">
                         <label>Slack Team:</label>
                         <span class="value">
-                            https://hippodreams.slack.com
+                            {{slack_team}}
                         </span>
                     </div>
                     <div class="row">
                         <label>Slack Username:</label>
                         <span class="value">
-                            @lampholder
+                            {{slack_username}}
                         </span>
                     </div>
                     <div class="row">
                         <label>Matrix Homeserver:</label>
                         <span class="value">
-                            https://matrix.org
+                            {{matrix_homeserver}}
                         </span>
                     </div>
                     <div class="row">
                         <label>Matrix ID:</label>
                         <span class="value">
-                            @lampholder:matrix.org
+                            {{matrix_id}}
                         </span>
                     </div>
                 </div>
