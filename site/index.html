@@ -1,0 +1,188 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Slack -> Riot.im Migration Tool</title>
+        <style>
+            body {
+                background-color: #d3ede1; /* #76cfa6; */
+                font-family: "Open Sans";
+                margin: 0px;
+                padding: 0px;
+                color: #454545;
+            }
+            h3 {
+                color: #454545;
+                margin-bottom: 12px;
+            }
+            div#center {
+                width: 800px;
+                margin-left: auto;
+                margin-right: auto;
+                margin-top: 0px;
+                overflow: hidden;
+            }
+            div#header {
+                margin-top: 40px;
+                margin-bottom: 40px;
+                padding-top: 20px;
+                padding-bottom: 20px;
+                padding-left: 160px;
+                padding-right: 160px;
+                vertical-align: middle;
+                line-height: 120px;
+                display: flex;
+                justify-content: space-between;
+            }
+            div#header img {
+                height: 120px;
+            }
+            div#content-title {
+                border-top-left-radius: 5px;
+                border-top-right-radius: 5px;
+                padding-left: 20px;
+                background: #76cfa6;
+                overflow: hidden;
+                margin-bottom: 0px;
+                color: white;
+            }
+            div#content {
+                margin-top: 0px;
+                padding: 20px;
+                padding-top: 10px;
+                color: black; /* #76cfa6; */
+                background: white; /*#eaf5f0;*/
+                border-bottom-left-radius: 5px;
+                border-bottom-right-radius: 5px;
+            }
+            .row {
+                margin-left: 20px;
+                overflow: hidden;
+                margin-bottom: 4px;
+            }
+            .row label {
+                width: 180px;
+                text-align: right;
+                color: #454545;
+                background: #d3ede1;
+                line-height: 50px;
+                display: inline-block;
+                font-weight: bold;
+                padding-right: 10px;
+                border-top-left-radius: 5px;
+                border-bottom-left-radius: 5px;
+            }
+            .row span.value {
+                width: 340px;
+                background: #eaf5f0;
+                line-height: 50px;
+                margin-left: -5px;
+                display: inline-block;
+                padding-left: 10px;
+                padding-right: 10px;
+                border-top-right-radius: 5px;
+                border-bottom-right-radius: 5px;
+            }
+            .row input {
+                width: 330px;
+                height: 30px;
+                display: inline-block;
+                padding-left: 8px;
+                font-size: large;
+                border-radius: 5px;
+                border: 1px solid #76cfa6;
+                position: relative;
+                top: -1px;
+            }
+            button {
+                border: 1px solid #76cfa6;
+                border-radius: 5px;
+                margin-top: 30px;
+                padding: 10px;
+                padding-left: 20px;
+                padding-right: 20px;
+                font-size: large;
+                background-color: #d3ede1;
+                display: block;
+                margin-left: auto;
+            }
+            div#footer span {
+                margin-top: 16px;
+                font-size: smaller;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+                text-align: center;
+            }
+            a:visited {
+                color: #454545;
+            }
+        </style>
+    </head>
+    <body>
+        <!--<script type="text/javascript" src="bin/app.js"></script> -->
+        <div id="center">
+            <div id="header">
+                <img src="images/green_slack.png">
+                <img src="images/green_arrow.png">
+                <img src="images/riot.png">
+            </div>
+            <div id="content-title">
+                <h1>
+                    Migrating account settings
+                </h1>
+            </div>
+            <div id="content">
+                <h3>Validate migration details:</h3>
+                <div class="rows">
+                    <div class="row">
+                        <label>Slack Team:</label>
+                        <span class="value">
+                            https://hippodreams.slack.com
+                        </span>
+                    </div>
+                    <div class="row">
+                        <label>Slack Username:</label>
+                        <span class="value">
+                            @lampholder
+                        </span>
+                    </div>
+                    <div class="row">
+                        <label>Matrix Homeserver:</label>
+                        <span class="value">
+                            https://matrix.org
+                        </span>
+                    </div>
+                    <div class="row">
+                        <label>Matrix ID:</label>
+                        <span class="value">
+                            @lampholder:matrix.org
+                        </span>
+                    </div>
+                </div>
+                <h3>Choose a new password:</h3>
+                <div class="rows">
+                    <div class="row">
+                        <label>Password:</label>
+                        <span class="value">
+                            <input type="password">
+                        </span>
+                    </div>
+                    <div class="row">
+                        <label>Confirm Password:</label>
+                        <span class="value">
+                            <input type="password">
+                        </span>
+                    </div>
+                </div>
+                <button>Claim Riot.im account</button>
+            </div>
+            <div id="footer">
+                <span>
+                    Powered by <a href="https://riot.im/app">riot.im</a> and <a href="https://matrix.org">matrix.org</a>
+                </span>
+            </div>
+        </div>
+    </body>
+</html>
