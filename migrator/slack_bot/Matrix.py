@@ -9,18 +9,17 @@ import requests
 from matrix_client.client import MatrixClient
 from matrix_client.errors import MatrixRequestError
 
+def passgen(mxid):
+    """Function for translating a mxid into a known-but-unguessable password.
+    Some element of this bad boy needs to be excluded from version control."""
+    return hashlib.md5(mxid + '\x00' + 'SALTY').hexdigest()
+
 class Matrix(object):
     """For wrangling the Matrix users."""
 
     def __init__(self, server, registration_secret):
         self._server = server
         self._registration_secret = registration_secret
-
-    @staticmethod
-    def passgen(mxid):
-        """Function for translating a mxid into a known-but-unguessable password.
-        Some element of this bad boy needs to be excluded from version control."""
-        return hashlib.md5(mxid + '\x00' + 'SALTY').hexdigest()
 
     def change_password(self, mxid, old_password, new_password):
         """Change a user's password.
@@ -46,7 +45,7 @@ class Matrix(object):
             print exception
             return False
 
-    def create_user(self, mxid, password_function=Matrix.passgen, admin=False):
+    def create_user(self, mxid, password_function=passgen, admin=False):
         """Creates a user - the password is generated from a function."""
 
         mac = hmac.new(key=self._registration_secret,

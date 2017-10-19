@@ -1,3 +1,5 @@
 config.yaml
 *.pyc
 *.egg-info
+build
+dist

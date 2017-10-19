@@ -28,6 +28,10 @@ def post_install():
 
     response = make_response(json.dumps(tokens), 200)
 
+    response.set_cookie('bot_access_token', tokens['bot']['bot_access_token'])
+    response.set_cookie('bot_user_id', tokens['bot']['bot_user_id'])
+    response.set_cookie('team_id', tokens['team_id'])
+    response.set_cookie('team_name', tokens['team_name'])
 
     print 'auth_code', auth_code
     #for token, value in tokens.iteritems():
