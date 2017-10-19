@@ -1,7 +1,9 @@
 # coding=utf-8
 """Handles registration of the app with Slack"""
 
+import json
 from flask import request
+from flask import make_response
 from slackclient import SlackClient
 from migrator import app
 from migrator import config
@@ -19,9 +21,14 @@ def post_install():
     auth_code = request.args['code']
 
     slack = SlackClient("")
-    print slack.api_call('oauth.access',
-                         client_id=config['slack']['client_id'],
-                         client_secret=config['slack']['secret'],
-                         code=auth_code)
+    tokens = slack.api_call('oauth.access',
+                            client_id=config['slack']['client_id'],
+                            client_secret=config['slack']['secret'],
+                            code=auth_code)
 
-    return 'Successfully installed!'
+    response = make_response(json.dumps(tokens), 200)
+
+    for token, value in tokens.iteritmes():
+        response.set_cookie(token, value)
+
+    return response
