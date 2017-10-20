@@ -11,13 +11,10 @@ from migrator import config
 from migrator.slack_bot import Slack
 from migrator.slack_bot import Matrix
 
-@app.route("/migrator/list", methods=["GET"])
+@app.route("/migrator/executeMigration", methods=["GET"])
 def list_users():
     """List the users"""
     bot_access_token = request.cookies.get('bot_access_token')
-    request.cookies.get('bot_user_id')
-    request.cookies.get('team_id')
-    request.cookies.get('team_name')
 
     slack = Slack(bot_access_token)
     matrix = Matrix('https://matrix.lant.uk', config['matrix']['registration_secret'])
@@ -26,7 +23,6 @@ def list_users():
     human_users = [profile for profile in slack_users
                    if profile['is_bot'] is False
                    and profile['id'] != 'USLACKBOT'] # Why is slack's slackbot not a bot?
-
 
     for human in human_users:
         mac = hmac.new(key='ABC123',
