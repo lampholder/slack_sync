@@ -17,7 +17,7 @@
                 margin-bottom: 12px;
             }
             div#center {
-                width: 800px;
+                width: 640px;
                 margin-left: auto;
                 margin-right: auto;
                 margin-top: 0px;
@@ -28,8 +28,8 @@
                 margin-bottom: 40px;
                 padding-top: 20px;
                 padding-bottom: 20px;
-                padding-left: 160px;
-                padding-right: 160px;
+                padding-left: 60px;
+                padding-right: 60px;
                 vertical-align: middle;
                 line-height: 120px;
                 display: flex;
@@ -47,6 +47,9 @@
                 margin-bottom: 0px;
                 color: white;
             }
+            div#content-title h1 {
+                font-size: larger;
+            }
             div#content {
                 margin-top: 0px;
                 padding: 20px;
@@ -59,14 +62,14 @@
             .row {
                 margin-left: 20px;
                 overflow: hidden;
-                margin-bottom: 4px;
+                margin-bottom: 2px;
+                line-height: 40px;
             }
             .row label {
                 width: 180px;
                 text-align: right;
                 color: #454545;
                 background: #d3ede1;
-                line-height: 50px;
                 display: inline-block;
                 font-weight: bold;
                 padding-right: 10px;
@@ -74,9 +77,8 @@
                 border-bottom-left-radius: 5px;
             }
             .row span.value {
-                width: 340px;
+                width: 350px;
                 background: #eaf5f0;
-                line-height: 50px;
                 margin-left: -5px;
                 display: inline-block;
                 padding-left: 10px;
@@ -85,20 +87,19 @@
                 border-bottom-right-radius: 5px;
             }
             .row input {
-                width: 330px;
-                height: 30px;
+                width: 340px;
+                height: 26px;
                 display: inline-block;
                 padding-left: 8px;
                 font-size: large;
                 border-radius: 5px;
                 border: 1px solid #76cfa6;
-                position: relative;
-                top: -1px;
             }
             button {
                 border: 1px solid #76cfa6;
                 border-radius: 5px;
                 margin-top: 30px;
+                margin-bottom: 10px;
                 padding: 10px;
                 padding-left: 20px;
                 padding-right: 20px;
@@ -106,6 +107,7 @@
                 background-color: #d3ede1;
                 display: block;
                 margin-left: auto;
+                margin-right: auto;
             }
             div#footer span {
                 margin-top: 16px;
@@ -131,11 +133,16 @@
             </div>
             <div id="content-title">
                 <h1>
-                    Migrating account settings
+                    Import account settings
                 </h1>
             </div>
             <div id="content">
-                <h3>Validate migration details:</h3>
+                <h3>Welcome!</h3>
+                <p>
+                    Welcome to Riot.im, the free and open source collaboration tool build
+                    on top of matrix - the open protocol for decentralised, federated encrypted messaging.
+                </p>
+                <h3>Migration details:</h3>
                 <div class="rows">
                     <div class="row">
                         <label>Slack Team:</label>
@@ -177,7 +184,7 @@
                         </span>
                     </div>
                 </div>
-                <button>Claim Riot.im account</button>
+                <button>Claim my Riot.im account</button>
             </div>
             <div id="footer">
                 <span>
