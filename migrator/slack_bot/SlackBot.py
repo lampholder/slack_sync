@@ -36,5 +36,6 @@ def list_users():
 
         message = 'Hi %s, please go to %s to claim your Riot.im account!' % (human['name'], url)
         slack.direct_message(human['id'], message)
+        print 'Sending ' + message + ' to ' + human['name']
 
     return json.dumps(human_users)
