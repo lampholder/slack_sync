@@ -4,7 +4,6 @@
 import json
 from flask import request
 from flask import make_response
-from flask import render_template
 from slackclient import SlackClient
 from migrator import app
 from migrator import config
@@ -41,21 +40,3 @@ def post_install():
 
     return response
 
-@app.route('/migrator/migrate', methods=['GET'])
-def migrate():
-    """Show the UX for initating the migration."""
-
-    bot_access_token = request.cookies.get('bot_access_token')
-    slack = Slack(bot_access_token)
-
-    slack_users = slack.list_users()['members']
-    human_users = [profile for profile in slack_users
-                   if profile['is_bot'] is False
-                   and profile['id'] != 'USLACKBOT'] # Why is slack's slackbot not a bot?
-
-    users = [{'name': human['real_name'],
-              'img': human['profile']['image_48']}
-             for human in human_users]
-
-    return render_template('migrate.html',
-                           users=users)

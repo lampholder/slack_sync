@@ -140,7 +140,7 @@
                 <h3>Migration details:</h3>
                 <div class="rows">
                     {% for user in users %}
-                        <div class="row"><img src="{{img}}">{{name}}</div>
+                        <div class="row"><img src="{{user['img']}}">{{user['name']}}</div>
                     {% endfor %}
                 </div>
                 <button>Claim my Riot.im account</button>
