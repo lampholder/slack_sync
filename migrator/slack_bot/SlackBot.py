@@ -3,7 +3,6 @@
 
 import hmac
 import json
-import string
 import hashlib
 from flask import request
 from flask import render_template
@@ -20,6 +19,7 @@ def list_users():
     slack = Slack(bot_access_token)
     matrix = Matrix('https://matrix.lant.uk', config['matrix']['registration_secret'])
 
+    team = slack.team()
     slack_users = slack.list_users()['members']
     human_users = [profile for profile in slack_users
                    if profile['is_bot'] is False
@@ -31,7 +31,7 @@ def list_users():
                        digestmod=hashlib.sha1)
         mac.update(human['name'])
 
-        url = 'https://matrix.org/migrator/claim?code=%s&name=%s' % (mac.hexdigest(), human['name'])
+        url = 'https://matrix.org/migrator/claim?code=%s&name=%s&team=%s' % (mac.hexdigest(), human['name'], team['team']['name'])
 
         message = 'Hi %s, please go to %s to claim your Riot.im account!' % (human['name'], url)
         slack.direct_message(human['id'], message)

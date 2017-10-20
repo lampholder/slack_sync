@@ -20,6 +20,10 @@ class Slack(object):
                     self._process(event)
                 time.sleep(1)
 
+    def team(self):
+        """Gets team details"""
+        return self._slack.api_call('team.info')
+
     def list_users(self):
         """Lists all the users in the attached team."""
         return self._slack.api_call('users.list')

@@ -14,6 +14,7 @@ matrix = Matrix(config['matrix']['homeserver'], config['matrix']['registration_s
 @app.route('/migrator/claim')
 def claim_form():
     name = request.args.get('name')
+    team = request.args.get('team')
     code = request.args.get('code')
 
     mac = hmac.new(key='ABC123',
@@ -23,7 +24,7 @@ def claim_form():
         return 'Invalid request'
 
     return render_template('claim.html',
-                            slack_team='https://hippodreams.slack.com',
+                            slack_team=team,
                             slack_username='@%s' % name,
                             matrix_homeserver='https://matrix.lant.uk',
                             matrix_id='@%s:lant.uk' % name)
