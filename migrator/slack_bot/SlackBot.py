@@ -25,6 +25,7 @@ def list_users():
                    and profile['id'] != 'USLACKBOT'] # Why is slack's slackbot not a bot?
 
     for human in human_users:
+        print human
         mac = hmac.new(key='ABC123',
                        digestmod=hashlib.sha1)
         mac.update(human['name'])
