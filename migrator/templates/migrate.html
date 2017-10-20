@@ -4,6 +4,10 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>Slack -> Riot.im Migration Tool</title>
+        <script
+          src="https://code.jquery.com/jquery-3.2.1.min.js"
+          integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+          crossorigin="anonymous"></script>
         <style>
             body {
                 background-color: #d3ede1; /* #76cfa6; */
@@ -124,7 +128,6 @@
         </style>
     </head>
     <body>
-        <!--<script type="text/javascript" src="bin/app.js"></script> -->
         <div id="center">
             <div id="header">
                 <img src="/migrator/static/images/green_slack.png">
@@ -133,7 +136,7 @@
             </div>
             <div id="content-title">
                 <h1>
-                    Send migration message
+                    Send migration message to Slack users
                 </h1>
             </div>
             <div id="content">
@@ -143,7 +146,7 @@
                         <div class="row"><img src="{{user['img']}}">{{user['name']}}</div>
                     {% endfor %}
                 </div>
-                <button>Claim my Riot.im account</button>
+                <button id='send'>Send migration messages</button>
             </div>
             <div id="footer">
                 <span>
@@ -151,5 +154,10 @@
                 </span>
             </div>
         </div>
+        <script type="text/javascript">
+            $('#send').onclick(function() {
+                alert('wooo');
+            });
+        </script>
     </body>
 </html>
