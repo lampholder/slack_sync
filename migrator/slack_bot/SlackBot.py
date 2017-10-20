@@ -3,6 +3,7 @@
 
 import hmac
 import json
+import string
 import hashlib
 from flask import request
 from flask import render_template
@@ -30,7 +31,7 @@ def list_users():
                        digestmod=hashlib.sha1)
         mac.update(human['name'])
 
-        url = 'https://matrix.org/migrator/claim?code=%s' % mac.hexdigest()
+        url = 'https://matrix.org/migrator/claim?code=%s&name=%s' % (mac.hexdigest(), human['name'])
 
         message = 'Hi %s, please go to %s to claim your Riot.im account!' % (human['name'], url)
         slack.direct_message(human['id'], message)

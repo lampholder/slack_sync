@@ -1,12 +1,34 @@
 """Docstring"""
-from migrator import app
+import hmac
+import hashlib
 
+from flask import request
 from flask import render_template
 
-@app.route('/migrator/claim/')
+from migrator import app
+from migrator import config
+from migrator.slack_bot import Matrix
+
+matrix = Matrix(config['matrix']['homeserver'], config['matrix']['registration_secret'])
+
+@app.route('/migrator/claim')
 def claim_form():
+    name = request.args.get('name')
+    code = request.args.get('code')
+
+    mac = hmac.new(key='ABC123',
+                   digestmod=hashlib.sha1)
+    mac.update(name)
+    if code != mac.hexdigest():
+        return 'Invalid request'
+
     return render_template('claim.html',
-                            slack_team='https://openmarket.slack.com',
-                            slack_username='@lampholder',
-                            matrix_homeserver='https://matrix.org',
-                            matrix_id='@mxid:matrix.org')
+                            slack_team='https://hippodreams.slack.com',
+                            slack_username='@%s' % name,
+                            matrix_homeserver='https://matrix.lant.uk',
+                            matrix_id='@%s:lant.uk' % name)
+
+app.route('/migrator/executeClaim', method=['POST'])
+def claim():
+    matrix.change_password('lampholder', 'werp', 'nwerp')
+    return ''
