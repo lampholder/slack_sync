@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Slack -> Riot.im Migration Tool</title>
+        <script
+          src="https://code.jquery.com/jquery-3.2.1.min.js"
+          integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+          crossorigin="anonymous"></script>
+        <link type='text/css' rel='stylesheet' href='{{mount}}/static/css/style.css'>
+    </head>
+    <body>
+        <div id="center">
+            <div id="header">
+                <img src="{{mount}}/static/images/green_slack.png">
+                <img src="{{mount}}/static/images/green_arrow.png">
+                <img src="{{mount}}/static/images/riot.png">
+            </div>
+            <div id="content-title">
+                <h1>
+                    Initiate migration
+                </h1>
+            </div>
+            <div id="content">
+                <h3>Migration details:</h3>
+                <div class="rows">
+                    <div class="row">
+                        <label>Homeserver:</label>
+                        <span class="value">
+                            <input type="text">
+                        </span>
+                    </div>
+                    <div class="row">
+                        <label>Regstration secret:</label>
+                        <span class="value">
+                            <input type="text">
+                        </span>
+                    </div>
+                </div>
+                <h3>Slack accounts:</h3>
+                <div class="rows">
+                    {% for user in users %}
+                        <div class="row"><img src="{{user['img']}}">{{user['name']}}</div>
+                    {% endfor %}
+                </div>
+                <button id='send'>Initiate migration</button>
+            </div>
+            <div id="footer">
+                <span>
+                    Powered by <a href="https://riot.im/app">riot.im</a> and <a href="https://matrix.org">matrix.org</a>
+                </span>
+            </div>
+        </div>
+        <script type="text/javascript">
+            $('#send').click(function() {
+                $.ajax({
+                    url: '/migrator/executeMigration',
+                    success: function() {
+                        $('#send').off();
+                        $('#send').html('Migration initiated!');
+                        $('#send').prop('disabled', true);
+                    },
+                    error: function(e) {
+                        alert('Sorry; something went wrong.');
+                        console.log(e);
+                    }
+                });
+            });
+        </script>
+    </body>
+</html>

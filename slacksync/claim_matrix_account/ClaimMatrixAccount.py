@@ -10,8 +10,9 @@ from slacksync import config
 from slacksync.interfaces import Matrix
 
 matrix = Matrix(config['matrix']['homeserver'], config['matrix']['registration_secret'])
+mount = config['local']['mount']
 
-@app.route('/slacksync/app/claim')
+@app.route(mount + '/app/claim')
 def claim_form():
     name = request.args.get('name')
     team = request.args.get('team')
@@ -29,7 +30,7 @@ def claim_form():
                             matrix_homeserver='https://matrix.lant.uk',
                             matrix_id='@%s:lant.uk' % name)
 
-app.route('/migrator/executeClaim', method=['POST'])
+app.route(mount + '/executeClaim', method=['POST'])
 def claim():
     matrix.change_password('lampholder', 'werp', 'nwerp')
     return ''

@@ -16,14 +16,20 @@ from slacksync.interfaces import Slack
 from slacksync.interfaces import Matrix
 
 matrix = Matrix('https://matrix.lant.uk', config['matrix']['registration_secret'])
+mount = config['local']['mount']
 
-@app.route("/slacksync/app/install", methods=["GET"])
+@app.route(mount + '/app/install', methods=['GET'])
 def pre_install():
     """Slack OAuth gubbins"""
-    url = 'https://slack.com/oauth/authorize?&client_id=%s&scope=bot' % config['slack']['client_id']
+    params = {'client_id': config['slack']['client_id'],
+              'scope': 'bot',
+              'redirect_uri': 'https://lant.uk/services/slacksync/app/finish_auth'}
+
+    url = 'https://slack.com/oauth/authorize?&client_id=%s&scope=bot' % urllib.urlencode(params)
+
     return redirect(url, 302)
 
-@app.route("/slacksync/app/finish_auth", methods=["GET", "POST"])
+@app.route(mount + '/app/finish_auth', methods=['GET', 'POST'])
 def post_install():
     """Slack OAuth gubbins"""
     auth_code = request.args['code']
@@ -32,7 +38,7 @@ def post_install():
                                   client_secret=config['slack']['secret'],
                                   code=auth_code)
 
-    response = make_response(redirect('/slacksync/migrate', 302))
+    response = make_response(redirect(mount +'/app/sync', 302))
 
     try:
         response.set_cookie('bot_access_token', tokens['bot']['bot_access_token'])
@@ -44,7 +50,7 @@ def post_install():
 
     return response
 
-@app.route('/slacksync/app/migrate', methods=['GET'])
+@app.route(mount + '/app/sync', methods=['GET'])
 def init_migrate():
     """Show the UX for initating the migration."""
 
@@ -60,10 +66,11 @@ def init_migrate():
               'img': human['profile']['image_48']}
              for human in human_users]
 
-    return render_template('migrate.html',
+    return render_template('sync.html',
+                           mount=mount,
                            users=users)
 
-@app.route('/slacksync/api/users', methods=['GET'])
+@app.route(mount + '/api/users', methods=['GET'])
 def list_users():
     """List all of the human users in this Slack team"""
     bot_access_token = request.cookies.get('bot_access_token')
@@ -76,7 +83,7 @@ def list_users():
 
     return human_users
 
-@app.route("/slacksync/api/sync/<string:slack_id>", methods=["POST"])
+@app.route(mount + '/slacksync/api/sync/<string:slack_id>', methods=['POST'])
 def sync(slack_id):
     """Sync a Slack id into matrix and advise the Slack user how to claim it"""
     bot_access_token = request.cookies.get('bot_access_token')
