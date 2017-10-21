@@ -1,0 +1,8 @@
+slack_app
+ - install app
+ - create matrix accounts
+ - broadcast sync invite
+
+account_claim
+ - choose password
+ - reset password

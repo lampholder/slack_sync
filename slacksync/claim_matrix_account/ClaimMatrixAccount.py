@@ -5,13 +5,13 @@ import hashlib
 from flask import request
 from flask import render_template
 
-from migrator import app
-from migrator import config
-from migrator.slack_bot import Matrix
+from slacksync import app
+from slacksync import config
+from slacksync.interfaces import Matrix
 
 matrix = Matrix(config['matrix']['homeserver'], config['matrix']['registration_secret'])
 
-@app.route('/migrator/claim')
+@app.route('/slacksync/app/claim')
 def claim_form():
     name = request.args.get('name')
     team = request.args.get('team')

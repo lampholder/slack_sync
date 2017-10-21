@@ -28,6 +28,11 @@ class Slack(object):
         """Lists all the users in the attached team."""
         return self._slack.api_call('users.list')
 
+    def user(self, user_id):
+        """Fetch the details for a specific user."""
+        return self._slack.api_call('user.info',
+                                    user=user_id)
+
     def direct_message(self, user, message):
         """Send a direct message to the specified user."""
         self._slack.api_call('chat.postMessage',

@@ -3,11 +3,11 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='migrator',
+    name='slacksync',
     version='0.1',
-    description='Slack->Riot.im migrator',
+    description='Slack->Riot.im account sync',
     author='Thomas Lant',
     author_email='lampholder@gmail.com',
-    url='https://github.com/lampholder/slack_migrator',
+    url='https://github.com/lampholder/slack_sync',
     packages=find_packages(exclude=('tests', 'docs'))
 )

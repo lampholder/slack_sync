@@ -1,0 +1,120 @@
+# coding=utf-8
+"""Handles registration of the app with Slack"""
+
+import hmac
+import urllib
+import hashlib
+
+from flask import request
+from flask import redirect
+from flask import make_response
+from flask import render_template
+
+from slacksync import app
+from slacksync import config
+from slacksync.interfaces import Slack
+from slacksync.interfaces import Matrix
+
+matrix = Matrix('https://matrix.lant.uk', config['matrix']['registration_secret'])
+
+@app.route("/slacksync/app/install", methods=["GET"])
+def pre_install():
+    """Slack OAuth gubbins"""
+    url = 'https://slack.com/oauth/authorize?&client_id=%s&scope=bot' % config['slack']['client_id']
+    return redirect(url, 302)
+
+@app.route("/slacksync/app/finish_auth", methods=["GET", "POST"])
+def post_install():
+    """Slack OAuth gubbins"""
+    auth_code = request.args['code']
+
+    tokens = Slack.complete_oauth(client_id=config['slack']['client_id'],
+                                  client_secret=config['slack']['secret'],
+                                  code=auth_code)
+
+    response = make_response(redirect('/slacksync/migrate', 302))
+
+    try:
+        response.set_cookie('bot_access_token', tokens['bot']['bot_access_token'])
+        response.set_cookie('bot_user_id', tokens['bot']['bot_user_id'])
+        response.set_cookie('team_id', tokens['team_id'])
+        response.set_cookie('team_name', tokens['team_name'])
+    except Exception, e:
+        return 'Unable to register app with slack.'
+
+    return response
+
+@app.route('/slacksync/app/migrate', methods=['GET'])
+def init_migrate():
+    """Show the UX for initating the migration."""
+
+    bot_access_token = request.cookies.get('bot_access_token')
+    slack = Slack(bot_access_token)
+
+    slack_users = slack.list_users()['members']
+    human_users = [profile for profile in slack_users
+                   if profile['is_bot'] is False
+                   and profile['id'] != 'USLACKBOT'] # Why is slack's slackbot not a bot?
+
+    users = [{'name': human['real_name'],
+              'img': human['profile']['image_48']}
+             for human in human_users]
+
+    return render_template('migrate.html',
+                           users=users)
+
+@app.route('/slacksync/api/users', methods=['GET'])
+def list_users():
+    """List all of the human users in this Slack team"""
+    bot_access_token = request.cookies.get('bot_access_token')
+
+    slack = Slack(bot_access_token)
+    slack_users = slack.list_users()['members']
+    human_users = [profile for profile in slack_users
+                   if profile['is_bot'] is False
+                   and profile['id'] != 'USLACKBOT'] # Why is slack's slackbot not a bot?
+
+    return human_users
+
+@app.route("/slacksync/api/sync/<string:slack_id>", methods=["POST"])
+def sync(slack_id):
+    """Sync a Slack id into matrix and advise the Slack user how to claim it"""
+    bot_access_token = request.cookies.get('bot_access_token')
+    request_body = request.get_json()
+
+    slack = Slack(bot_access_token)
+
+    user = request_body.user(slack_id)
+    team = slack.team()
+
+    def assemble_mac(user, team, secret):
+        """Generate a mac to authenticate the api request."""
+        mac = hmac.new(key=secret,
+                       digestmod=hashlib.sha1)
+        mac.update(user)
+        mac.update('\x00')
+        mac.update(team)
+        return mac.hexdigest()
+
+    user_name = user['name']
+    team_name = team['team']['name']
+
+    params = {'code': assemble_mac(user=user_name,
+                                   team=team_name,
+                                   secret=config['local']['secret']),
+              'user': user_name,
+              'team': team_name}
+
+    url = (config['local']['sync_server'] +
+           config['local']['mount'] +
+           '/sync?%s' % urllib.urlencode(params))
+
+    message = 'Hi, @%s; please go to %s to sync your Slack id with Riot.im!' % (user_name, url)
+
+    try:
+        matrix.create_user(user_name)
+        slack.direct_message(user['id'], message)
+    except Exception, e:
+        return(e, 404)
+
+    return 'Success!'
