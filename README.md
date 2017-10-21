@@ -1,2 +1,2 @@
 # slack_migrator
-Tool for migrating Slack users onto a dedicate Matrix server.
+Tool for syncing Slack accounts onto a dedicated Matrix server.
