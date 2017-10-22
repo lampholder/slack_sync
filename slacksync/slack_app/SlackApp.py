@@ -51,7 +51,7 @@ def post_install():
     return response
 
 @app.route(mount + '/app/sync', methods=['GET'])
-def init_migrate():
+def init_sync():
     """Show the UX for initating the migration."""
 
     bot_access_token = request.cookies.get('bot_access_token')
