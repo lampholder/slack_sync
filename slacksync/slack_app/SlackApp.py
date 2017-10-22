@@ -1,6 +1,7 @@
 # coding=utf-8
 """Handles registration of the app with Slack"""
 
+import json
 import hmac
 import urllib
 import hashlib
@@ -131,6 +132,8 @@ def sync(slack_id):
         matrix = Matrix(homeserver)
         matrix.create_user(user_name, registration_secret)
         slack.direct_message(user['user']['id'], message)
-        return 'Success!'
+        return 'SYNC SUCCEEDED'
     except Exception, exc:
-        return 'Nope', 404
+        if 'M_USER_IN_USE' in exc.message:
+            return 'SYNC FAILED - MXID IN USE', 404
+        return 'SYNC FAILED', 404
