@@ -5,6 +5,7 @@ import hmac
 import urllib
 import hashlib
 
+from flask import jsonify
 from flask import request
 from flask import redirect
 from flask import make_response
@@ -15,7 +16,6 @@ from slacksync import config
 from slacksync.interfaces import Slack
 from slacksync.interfaces import Matrix
 
-matrix = Matrix('https://matrix.lant.uk', config['matrix']['registration_secret'])
 mount = config['local']['mount']
 
 @app.route(mount + '/app/install', methods=['GET'])
@@ -23,7 +23,7 @@ def pre_install():
     """Slack OAuth gubbins"""
     params = {'client_id': config['slack']['client_id'],
               'scope': 'bot',
-              'redirect_uri': 'https://lant.uk/services/slacksync/app/finish_auth'}
+              'redirect_uri': 'https://lant.uk/services/slacksync/app/finish_auth'} #TODO: Don't hardcode this
 
     url = 'https://slack.com/oauth/authorize?&client_id=%s&scope=bot' % urllib.urlencode(params)
 
@@ -63,6 +63,7 @@ def init_migrate():
                    and profile['id'] != 'USLACKBOT'] # Why is slack's slackbot not a bot?
 
     users = [{'name': human['real_name'],
+              'id': human['id'],
               'img': human['profile']['image_48']}
              for human in human_users]
 
@@ -81,9 +82,9 @@ def list_users():
                    if profile['is_bot'] is False
                    and profile['id'] != 'USLACKBOT'] # Why is slack's slackbot not a bot?
 
-    return human_users
+    return jsonify(human_users)
 
-@app.route(mount + '/slacksync/api/sync/<string:slack_id>', methods=['POST'])
+@app.route(mount + '/api/sync/<string:slack_id>', methods=['POST'])
 def sync(slack_id):
     """Sync a Slack id into matrix and advise the Slack user how to claim it"""
     bot_access_token = request.cookies.get('bot_access_token')
@@ -91,37 +92,45 @@ def sync(slack_id):
 
     slack = Slack(bot_access_token)
 
-    user = request_body.user(slack_id)
+    homeserver = request_body['homeserver']
+    registration_secret = request_body['registration_secret']
+
+    user = slack.user(slack_id)
     team = slack.team()
 
-    def assemble_mac(user, team, secret):
+    def assemble_mac(user, team, homeserver, secret):
         """Generate a mac to authenticate the api request."""
         mac = hmac.new(key=secret,
                        digestmod=hashlib.sha1)
         mac.update(user)
         mac.update('\x00')
         mac.update(team)
+        mac.update('\x00')
+        mac.update(homeserver)
+
         return mac.hexdigest()
 
-    user_name = user['name']
+    user_name = user['user']['name']
     team_name = team['team']['name']
 
     params = {'code': assemble_mac(user=user_name,
                                    team=team_name,
+                                   homeserver=homeserver,
                                    secret=config['local']['secret']),
               'user': user_name,
-              'team': team_name}
+              'team': team_name,
+              'homeserver': homeserver}
 
     url = (config['local']['sync_server'] +
            config['local']['mount'] +
-           '/sync?%s' % urllib.urlencode(params))
+           '/app/claim?%s' % urllib.urlencode(params))
 
     message = 'Hi, @%s; please go to %s to sync your Slack id with Riot.im!' % (user_name, url)
 
     try:
-        matrix.create_user(user_name)
-        slack.direct_message(user['id'], message)
-    except Exception, e:
-        return(e, 404)
-
-    return 'Success!'
+        matrix = Matrix(homeserver)
+        matrix.create_user(user_name, registration_secret)
+        slack.direct_message(user['user']['id'], message)
+        return 'Success!'
+    except Exception, exc:
+        return 'Nope', 404

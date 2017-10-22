@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Slack -> Riot.im Migration Tool</title>
+        <title>Slack -> Riot.im Sync Tool</title>
         <script
           src="https://code.jquery.com/jquery-3.2.1.min.js"
           integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
@@ -23,25 +23,25 @@
                 </h1>
             </div>
             <div id="content">
-                <h3>Migration details:</h3>
+                <h3>Account sync details:</h3>
                 <div class="rows">
                     <div class="row">
                         <label>Homeserver:</label>
                         <span class="value">
-                            <input type="text">
+                            <input id='homeserver' type="text" placeholder="e.g. https://matrix.org">
                         </span>
                     </div>
                     <div class="row">
                         <label>Regstration secret:</label>
                         <span class="value">
-                            <input type="text">
+                            <input id='reg_secret' type="text">
                         </span>
                     </div>
                 </div>
                 <h3>Slack accounts:</h3>
                 <div class="rows">
                     {% for user in users %}
-                        <div class="row"><img src="{{user['img']}}">{{user['name']}}</div>
+                        <div class="row" id="{{user['id']}}"><img src="{{user['img']}}">{{user['name']}}</div>
                     {% endfor %}
                 </div>
                 <button id='send'>Initiate migration</button>
@@ -55,11 +55,29 @@
         <script type="text/javascript">
             $('#send').click(function() {
                 $.ajax({
-                    url: '/migrator/executeMigration',
-                    success: function() {
+                    url: '{{mount}}/api/users',
+                    success: function(users) {
                         $('#send').off();
-                        $('#send').html('Migration initiated!');
+                        $('#send').html('Sync initiated!');
                         $('#send').prop('disabled', true);
+                        users.forEach(function(user) {
+                            $.ajax({
+                                url: '{{mount}}/api/sync/' + user['id'],
+                                method: 'POST',
+                                contentType: "application/json",
+                                data: JSON.stringify(
+                                    {
+                                        homeserver: $('#homeserver').val(),
+                                        registration_secret: $('#reg_secret').val()
+                                    }),
+                                success: function() {
+                                    $('#' + user['id']).append($('<span>DONE</span>')); 
+                                },
+                                error: function(response) {
+                                    $('#' + user['id']).append($('<span>' + response.responseText + '</span>')); 
+                                }
+                            });
+                        });
                     },
                     error: function(e) {
                         alert('Sorry; something went wrong.');

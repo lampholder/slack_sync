@@ -12,14 +12,13 @@ from matrix_client.errors import MatrixRequestError
 def passgen(mxid):
     """Function for translating a mxid into a known-but-unguessable password.
     Some element of this bad boy needs to be excluded from version control."""
-    return hashlib.md5(mxid + '\x00' + 'SALTY').hexdigest()
+    return hashlib.md5(mxid + 'SALTY').hexdigest()
 
 class Matrix(object):
     """For wrangling the Matrix users."""
 
-    def __init__(self, server, registration_secret):
+    def __init__(self, server):
         self._server = server
-        self._registration_secret = registration_secret
 
     def change_password(self, mxid, old_password, new_password):
         """Change a user's password.
@@ -45,17 +44,17 @@ class Matrix(object):
             print exception
             return False
 
-    def create_user(self, mxid, password_function=passgen, admin=False):
+    def create_user(self, mxid, registration_secret, password_function=passgen, admin=False):
         """Creates a user - the password is generated from a function."""
 
-        mac = hmac.new(key=self._registration_secret,
+        mac = hmac.new(key=registration_secret.encode('ascii', 'ignore'),
                        digestmod=hashlib.sha1)
 
         password = password_function(mxid)
 
-        mac.update(mxid)
+        mac.update(mxid.encode('ascii', 'ignore'))
         mac.update("\x00")
-        mac.update(password)
+        mac.update(password.encode('ascii', 'ignore'))
         mac.update("\x00")
         mac.update("admin" if admin else "notadmin")
 
@@ -67,11 +66,13 @@ class Matrix(object):
             "admin": admin,
         }
 
+        print 'Syncing Slack(%s) to Matrix(%s) on %s' % (mxid, mxid, self._server)
+
         response = requests.post('%s/_matrix/client/api/v1/register' % self._server,
                                  data=json.dumps(body),
                                  headers={'Content-Type': 'application/json'})
 
-        if response.code != 200:
-            raise Exception(response.code, response.text)
+        if response.status_code != 200:
+            raise Exception('%s: %s' % (response.status_code, response.text))
         else:
             return True
