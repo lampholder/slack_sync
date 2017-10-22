@@ -41,7 +41,7 @@
                 <h3>Slack accounts:</h3>
                 <div class="rows">
                     {% for user in users %}
-                        <div class="row" id="{{user['id']}}"><img src="{{user['img']}}">{{user['name']}}</div>
+                        <div class="row user" id="{{user['id']}}"><img src="{{user['img']}}"><span>{{user['name']}}</span></div>
                     {% endfor %}
                 </div>
                 <button id='send'>Initiate migration</button>
@@ -54,36 +54,41 @@
         </div>
         <script type="text/javascript">
             $('#send').click(function() {
-                $.ajax({
-                    url: '{{mount}}/api/users',
-                    success: function(users) {
-                        $('#send').off();
-                        $('#send').html('Sync initiated!');
-                        $('#send').prop('disabled', true);
-                        users.forEach(function(user) {
-                            $.ajax({
-                                url: '{{mount}}/api/sync/' + user['id'],
-                                method: 'POST',
-                                contentType: "application/json",
-                                data: JSON.stringify(
-                                    {
-                                        homeserver: $('#homeserver').val(),
-                                        registration_secret: $('#reg_secret').val()
-                                    }),
-                                success: function() {
-                                    $('#' + user['id']).append($('<span>DONE</span>')); 
-                                },
-                                error: function(response) {
-                                    $('#' + user['id']).append($('<span>' + response.responseText + '</span>')); 
-                                }
+                if($('#homeserver').val() == '' || $('#reg_secret').val() == '') {
+                    alert('Please complete all fields'); 
+                }
+                else {
+                    $.ajax({
+                        url: '{{mount}}/api/users',
+                        success: function(users) {
+                            $('#send').off();
+                            $('#send').html('Sync initiated!');
+                            $('#send').prop('disabled', true);
+                            users.forEach(function(user) {
+                                $.ajax({
+                                    url: '{{mount}}/api/sync/' + user['id'],
+                                    method: 'POST',
+                                    contentType: "application/json",
+                                    data: JSON.stringify(
+                                        {
+                                            homeserver: $('#homeserver').val(),
+                                            registration_secret: $('#reg_secret').val()
+                                        }),
+                                    success: function() {
+                                        $('#' + user['id']).append($('<span>DONE</span>')); 
+                                    },
+                                    error: function(response) {
+                                        $('#' + user['id']).append($('<span>' + response.responseText + '</span>')); 
+                                    }
+                                });
                             });
-                        });
-                    },
-                    error: function(e) {
-                        alert('Sorry; something went wrong.');
-                        console.log(e);
-                    }
-                });
+                        },
+                        error: function(e) {
+                            alert('Sorry; something went wrong.');
+                            console.log(e);
+                        }
+                    });
+                }
             });
         </script>
     </body>

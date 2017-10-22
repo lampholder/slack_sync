@@ -52,6 +52,12 @@ div#content {
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
 }
+.user {
+    vertical-align: middle;
+}
+.user img {
+    border-radius: 50%;
+}
 .row {
     margin-left: 20px;
     overflow: hidden;

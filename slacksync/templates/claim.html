@@ -91,26 +91,34 @@
                     $('#submit').prop('disabled', true);
                 }
             };
-            $('#pw').change(pwmatch);
-            $('#pw2').change(pwmatch);
+            $('#pw').keyup(pwmatch);
+            $('#pw2').keyup(pwmatch);
             $('#submit').click(function() {
-                $.ajax({
-                    url: '{{mount}}/api/claim',
-                    method: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(
-                        {
-                            user: '{{matrix_id}}',
-                            password: $('#pw').val(),
-                            homeserver: '{{matrix_homeserver}}',
-                            team: '{{slack_team}}',
-                            code: '{{code}}' 
-                        }),
-                    success: function() {
-                    },
-                    error: function(response) {
-                    }
-                });
+                if($('#pw').val() != $('#pw2').val()) {
+                    alert('Passwords don\'t match');
+                }
+                else {
+                    $('#submit').html('Claiming...');
+                    $.ajax({
+                        url: '{{mount}}/api/claim',
+                        method: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify(
+                            {
+                                user: '{{matrix_id}}',
+                                password: $('#pw').val(),
+                                homeserver: '{{matrix_homeserver}}',
+                                team: '{{slack_team}}',
+                                code: '{{code}}' 
+                            }),
+                        success: function() {
+                            $('#submit').html('Password set!');
+                        },
+                        error: function(response) {
+                            alert('Password reset failed! Have this account already been claimed?'); 
+                        }
+                    });
+                }
             });  
         </script>
     </body>
