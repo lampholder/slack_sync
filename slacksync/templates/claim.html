@@ -98,26 +98,28 @@
                     alert('Passwords don\'t match');
                 }
                 else {
-                    $('#submit').html('Claiming...');
-                    $.ajax({
-                        url: '{{mount}}/api/claim',
-                        method: 'POST',
-                        contentType: 'application/json',
-                        data: JSON.stringify(
-                            {
-                                user: '{{matrix_id}}',
-                                password: $('#pw').val(),
-                                homeserver: '{{matrix_homeserver}}',
-                                team: '{{slack_team}}',
-                                code: '{{code}}' 
-                            }),
-                        success: function() {
-                            $('#submit').html('Password set!');
-                        },
-                        error: function(response) {
-                            alert('Password reset failed! Have this account already been claimed?'); 
-                        }
-                    });
+                    if($('#pw').val() != '') {
+                        $('#submit').html('Claiming...');
+                        $.ajax({
+                            url: '{{mount}}/api/claim',
+                            method: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(
+                                {
+                                    user: '{{matrix_id}}',
+                                    password: $('#pw').val(),
+                                    homeserver: '{{matrix_homeserver}}',
+                                    team: '{{slack_team}}',
+                                    code: '{{code}}' 
+                                }),
+                            success: function() {
+                                $('#submit').html('Password set!');
+                            },
+                            error: function(response) {
+                                alert('Password reset failed! Has this account already been claimed?'); 
+                            }
+                        });
+                    }
                 }
             });  
         </script>

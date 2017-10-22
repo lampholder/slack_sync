@@ -63,7 +63,7 @@ def init_sync():
                    if profile['is_bot'] is False
                    and profile['id'] != 'USLACKBOT'] # Why is slack's slackbot not a bot?
 
-    users = [{'name': human['real_name'],
+    users = [{'name': human['real_name'] if 'real_name' in human else human['name'],
               'id': human['id'],
               'img': human['profile']['image_48']}
              for human in human_users]
