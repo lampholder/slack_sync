@@ -13,7 +13,7 @@ mount = config['local']['mount']
 def passgen(mxid):
     """Function for translating a mxid into a known-but-unguessable password.
     Some element of this bad boy needs to be excluded from version control."""
-    return hashlib.md5(mxid + 'SALTY').hexdigest()
+    return hashlib.md5(mxid + config['local']['password_gen_secret']).hexdigest()
 
 @app.route(mount + '/app/claim')
 def claim_form():
@@ -22,7 +22,7 @@ def claim_form():
     code = request.args.get('code')
     homeserver = request.args.get('homeserver')
 
-    mac = hmac.new(key=config['local']['secret'],
+    mac = hmac.new(key=config['local']['sync_secret'],
                    digestmod=hashlib.sha1)
     mac.update(user)
     mac.update('\x00')
@@ -54,7 +54,7 @@ def claim():
     team = request_body['team']
     code = request_body['code']
 
-    mac = hmac.new(key=config['local']['secret'],
+    mac = hmac.new(key=config['local']['sync_secret'],
                    digestmod=hashlib.sha1)
     mac.update(user)
     mac.update('\x00')

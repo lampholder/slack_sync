@@ -117,7 +117,7 @@ def sync(slack_id):
     params = {'code': assemble_mac(user=user_name,
                                    team=team_name,
                                    homeserver=homeserver,
-                                   secret=config['local']['secret']),
+                                   secret=config['local']['sync_secret']),
               'user': user_name,
               'team': team_name,
               'homeserver': homeserver}

@@ -12,7 +12,7 @@ from matrix_client.errors import MatrixRequestError
 def passgen(mxid):
     """Function for translating a mxid into a known-but-unguessable password.
     Some element of this bad boy needs to be excluded from version control."""
-    return hashlib.md5(mxid + 'SALTY').hexdigest()
+    return hashlib.md5(mxid + config['local']['password_gen_secret']).hexdigest()
 
 class Matrix(object):
     """For wrangling the Matrix users."""
