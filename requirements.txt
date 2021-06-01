@@ -14,6 +14,6 @@ requests==2.18.4
 six==1.11.0
 slackclient==1.0.9
 -e git+https://github.com/lampholder/slack_sync.git@df2b88c82a3a901dde5ddf149dc69dc47f3dbeea#egg=slacksync
-urllib3==1.22
+urllib3==1.26.5
 websocket-client==0.44.0
 Werkzeug==0.12.2
